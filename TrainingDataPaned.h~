@@ -1,0 +1,50 @@
+#include <gtk/gtk.h>
+#include <stdlib.h>
+#include <string.h>
+
+GtkWidget *mainGrid;
+GtkWidget *selectTrainingDataButton;
+GtkWidget *paned;
+GtkWidget *selectButtonBox;
+GtkWidget *noTrainingDataLabel;
+
+GtkWidget *samplingRatePaned;
+GtkWidget *samplingRateIndicator;
+
+
+//sudo pip install --upgrade --trusted-host wxpython.org --pre -f http://wxpython.org/Phoenix/snapshot-builds/ wxPython_Phoenix
+
+
+void training_data_paned_setting(GtkWidget *TrainingPaned){
+  paned = TrainingPaned;
+
+  mainGrid = gtk_grid_new();  
+  gtk_grid_set_column_homogeneous(mainGrid, TRUE);
+  gtk_grid_set_row_homogeneous(mainGrid, TRUE);
+
+  selectTrainingDataButton = gtk_button_new_with_label("Select Training Data");
+  selectButtonBox = gtk_button_box_new(GTK_ORIENTATION_VERTICAL);
+
+  gtk_container_add(GTK_CONTAINER(paned), mainGrid);
+  gtk_container_add(GTK_CONTAINER(selectButtonBox), selectTrainingDataButton);
+
+  gtk_grid_attach(GTK_GRID(mainGrid), selectButtonBox, 0, 0, 2, 1);
+
+  noTrainingDataLabel = gtk_label_new("No Training Data Selected");
+  gtk_grid_attach(GTK_GRID(mainGrid), noTrainingDataLabel, 0, 1, 2, 1);
+  
+  sampling_rate_paned_setting("15");
+
+
+
+}
+
+void sampling_rate_paned_setting(char** num){
+  char** title = "Sampling Rate: ";
+  char** label = malloc(strlen(title) + strlen(num) + 1);
+  strcpy(label, title);
+  strcat(label, num);
+  samplingRateIndicator = gtk_label_new(label);
+  
+  gtk_grid_attach(GTK_GRID(mainGrid), samplingRateIndicator, 0, 2, 2, 1);
+}

@@ -1,0 +1,91 @@
+#include <gtk/gtk.h>
+#include "TrainingDataPaned.h"
+#include "FeatureWeightsPaned.h"
+
+
+GtkWidget *MainWindow;
+GtkWidget *labelAlign;
+GtkWidget *label;
+GtkWidget *mainPaned;
+GtkWidget *controlPaned;
+GtkWidget *trainingDataPaned;
+GtkWidget *titlePaned;
+
+GtkWidget *subPaned;
+GtkWidget *featureAndTestAndCrossPaned;
+
+GtkWidget *featureAndCrossPaned;
+
+GtkWidget *featureWeightsPaned;
+GtkWidget *testDataPaned;
+GtkWidget *crossValidatePaned;
+GtkWidget *statusPaned;
+
+void init_GUI(GtkWidget *Window){
+
+  MainWindow = Window;
+  
+  MainWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_title(GTK_WINDOW(MainWindow),"P300 GUI REMASTERED");
+  gtk_window_set_default_size(GTK_WINDOW(MainWindow), 700, 600);
+  gtk_window_set_position(GTK_WINDOW(MainWindow), GTK_WIN_POS_CENTER);
+  gtk_container_set_border_width(GTK_CONTAINER(MainWindow), 5);
+
+  mainPaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+  titlePaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+  gtk_container_add(GTK_CONTAINER(MainWindow),mainPaned);
+  gtk_container_add(GTK_CONTAINER(mainPaned), titlePaned);
+  set_title(titlePaned,"Checkerboard Version");
+
+  controlPaned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
+  gtk_container_add(GTK_CONTAINER(mainPaned), controlPaned);
+
+  trainingDataPaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+  gtk_container_add(GTK_CONTAINER(controlPaned), trainingDataPaned);
+  set_title(trainingDataPaned, "Training Data");
+
+  training_data_paned_setting(trainingDataPaned);
+  
+  subPaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+  gtk_container_add(GTK_CONTAINER(controlPaned), subPaned);
+  
+  featureAndTestAndCrossPaned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
+  statusPaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+  gtk_container_add(GTK_CONTAINER(subPaned), featureAndTestAndCrossPaned);
+  
+  featureAndCrossPaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+  gtk_container_add(GTK_CONTAINER(featureAndTestAndCrossPaned), featureAndCrossPaned);
+  
+  featureWeightsPaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+  gtk_container_add(GTK_CONTAINER(featureAndCrossPaned), featureWeightsPaned);
+  set_title(featureWeightsPaned, "Feature Weights");
+  feature_weights_paned_setting(featureWeightsPaned);
+  
+  crossValidatePaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+  gtk_container_add(GTK_CONTAINER(featureAndCrossPaned), crossValidatePaned);
+  set_title(crossValidatePaned, "Cross Validate");
+	
+  testDataPaned = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+  gtk_container_add(GTK_CONTAINER(featureAndTestAndCrossPaned), testDataPaned);
+  set_title(testDataPaned, "Test Data");
+
+  gtk_container_add(GTK_CONTAINER(subPaned), statusPaned);
+  set_title(statusPaned, "Status");
+
+  
+
+  
+  gtk_widget_show_all(MainWindow);
+  
+  g_signal_connect(G_OBJECT(MainWindow), "", G_CALLBACK(gtk_main_quit), NULL);
+}
+
+void set_title(GtkWidget *paned, char ** title){
+  label = gtk_label_new(title);
+  labelAlign = gtk_alignment_new(0, 0, 0, 0);
+  
+  gtk_container_add(GTK_CONTAINER(labelAlign), label);
+  gtk_container_add(GTK_CONTAINER(paned), labelAlign);
+
+
+}

@@ -1,0 +1,17 @@
+#include <gtk/gtk.h>
+
+GtkWidget *paned;
+GtkWidget *addFileButton;
+GtkWidget *clearAllFilesButton;
+
+
+void feature_weights_paned_setting(GtkWidget *featurePaned){
+  paned = featurePaned;
+
+  addFileButton = gtk_button_new_with_label("Add *.mud Files");
+  clearAllFilesButton = gtk_button_new_with_label("Clear All*.mud Files");
+
+  gtk_container_add(GTK_CONTAINER(paned), addFileButton);
+  gtk_container_add(GTK_CONTAINER(paned), clearAllFilesButton);
+  
+}

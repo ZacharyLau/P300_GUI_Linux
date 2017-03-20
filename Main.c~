@@ -1,0 +1,14 @@
+#include <gtk/gtk.h>
+#include "MainFrame.h"
+
+int main(int argc, char ** argv){
+  gtk_init(&argc, &argv);
+  
+  GtkWidget *Mainwindow;
+  init_GUI(Mainwindow);
+
+  gtk_main();
+  
+  return 0;
+
+}
