@@ -40,6 +40,8 @@ GtkWidget *creater2rPlotsButton;
 GtkWidget *selectTrainingDataDialog;
 //GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
 gint res;
+//Gtk_file_chooser
+GtkWidget *chooser;
 
 void select_training_data_dialog();
 int concadenate_two_strings(char* , char* );
@@ -128,8 +130,11 @@ void training_data_paned_setting(GtkWidget *TrainingPaned){
 
 void select_training_data_dialog(){
   selectTrainingDataDialog = gtk_file_chooser_dialog_new ("Open File", NULL, GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
-  gtk_dialog_run(GTK_DIALOG(selectTrainingDataDialog));
+  gtk_file_chooser_set_select_multiple(selectTrainingDataDialog, TRUE);
+  chooser = gtk_dialog_run(GTK_DIALOG(selectTrainingDataDialog));
 
+
+  
 
 }
 
