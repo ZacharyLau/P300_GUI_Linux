@@ -37,11 +37,13 @@ GtkWidget *generateFeatureWeightsButton;
 GtkWidget *creater2rPlotsButton;
 
 //select training data dialog components 
-GtkWidget *selectTrainingDataDialog;
+GtkWidget *selectTrainingDataChooser;
+GtkWidget *selectTrainingDataWindow;
 //GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
 gint res;
 //Gtk_file_chooser
-GtkWidget *chooser;
+GtkWidget *selectTrainingDataDialog;
+GSList *trainingDataList;
 
 void select_training_data_dialog();
 int concadenate_two_strings(char* , char* );
@@ -129,9 +131,33 @@ void training_data_paned_setting(GtkWidget *TrainingPaned){
 
 
 void select_training_data_dialog(){
-  selectTrainingDataDialog = gtk_file_chooser_dialog_new ("Open File", NULL, GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
-  gtk_file_chooser_set_select_multiple(selectTrainingDataDialog, TRUE);
-  chooser = gtk_dialog_run(GTK_DIALOG(selectTrainingDataDialog));
+  
+  
+  selectTrainingDataChooser = gtk_file_chooser_dialog_new ("Open File", NULL, GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_OK, NULL);
+
+
+  gtk_file_chooser_set_select_multiple(selectTrainingDataChooser, TRUE);
+  selectTrainingDataDialog = gtk_dialog_run(GTK_DIALOG(selectTrainingDataChooser));
+
+  trainingDataList = gtk_file_chooser_get_filenames(selectTrainingDataChooser);
+
+  if(selectTrainingDataDialog == GTK_RESPONSE_OK){
+    trainingDataList = gtk_file_chooser_get_filenames(selectTrainingDataChooser);
+    printf("do something \n");
+    fflush(stdout);
+    for(int i = 0; i < g_slist_length(trainingDataList); i++){
+      printf("%s \n", g_slist_nth_data (trainingDataList, i));
+      fflush(stdout);
+    }
+  gtk_widget_destroy(selectTrainingDataChooser);
+  return;
+     
+  }else{
+    printf("do nothing \n");
+    fflush(stdout);
+    gtk_widget_destroy(selectTrainingDataChooser);
+    return;
+  }
 
 
   
