@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include "AbstractParameter.c"
+
+FILE *fp;
+
+void read_training_file(char** address){
+  fp = fopen(address, "r");
+
+  fprintf(fp);
+
+
+
+  fclose(fp);
+}  
+
+
+int main(int agrc, char** agrv){
+  read_training_file();
+
+}
