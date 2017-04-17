@@ -2,6 +2,14 @@
 #include <string.h>
 //#include "AbstractParameter.c"
 #include "ReadingBufferMethods.c"
+#include "Parameter.h"
+
+typedef struct typelist{
+  char *type;
+}typelist;
+
+
+
 FILE *fpGetLength;
 FILE *fpRead;
 int headerLen;
@@ -20,34 +28,85 @@ void read_training_file(char* address){
   for(int i=0; i<stateVectorLen;i++){
     get_crlf_line();
   }
-  
+
+//skip the title  
   get_crlf_line();
-  printf("\n%s\n",get_crlf_line());
-  
+
+//set parameters
+  //printf("\n%s\n",get_crlf_line());
+//testing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
+  int typeo = 0;
+  typelist* type = malloc(1000);
+  for(int i=0;i<(headerLen-stateVectorLen-1);i++){
+    char* temp = get_parameter_line(get_crlf_line());
+    int fg = 0;
+    for(int j=0; j<typeo;j++){
+      if(match(temp, typeo[j])){
+        break;
+        fg = 1;
+      }else{
+        continue;
+      }
+    }
+
+    if(fg){
+      type[typeo] = temp;
+      typeo ++;
+    } 
+   
+  }
+   
+  for(int i=0; i<=typeo; i++){
+    printf("\ntype: %s \n", type[typeo]);
+  }
+  //get_parameter_line(get_crlf_line());
+
   fclose(fpGetLength); 
   fclose(fpRead);
   
-}  
+} 
+
+int match(char* str1, char* str2){
+
+
+
+}
+
+//testing!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+int get_parameter_line(char* str){
+
+  globalStr = str;
+
+  trim_parameter(0);
+
+  return trim_parameter(0);
+  //printf("\ntype: %s\n", trim_parameter(0));
+
+  //printf("\nname: %s\n", trim_parameter(1));
+
+  //printf("\nvalue: %s\n", trim_parameter(0));
+
+}
 
 void get_headerLen_sourceCh_stateVectorLen(char* str){
 //init globalStr
   globalStr = str;
 //trimming process
-  trim_parameter();
-  headerLen = atoi(trim_parameter());
+  trim_parameter(1);
+  headerLen = atoi(trim_parameter(0));
   printf("\n header length: %d \n",headerLen);
   
-  trim_parameter();
-  sourceCh = atoi(trim_parameter());
+  trim_parameter(1);
+  sourceCh = atoi(trim_parameter(0));
   printf("\n source channel: %d \n",sourceCh);
   
-  trim_parameter();
-  stateVectorLen = atoi(trim_parameter());
+  trim_parameter(1);
+  stateVectorLen = atoi(trim_parameter(0));
   printf("\n state vecotor Length: %d \n",stateVectorLen);
   
 }
 
-int trim_parameter(){
+int trim_parameter(int isParameterName){
   int i;
   for(i=0; i<strlen(globalStr); i++){
     //printf("current char: %c\n",globalStr[i]);
@@ -59,7 +118,7 @@ int trim_parameter(){
   }
   
   char* retstr = malloc(i);
-  if(globalStr[0]<47  || globalStr[0]>59){ 
+  if(isParameterName){ 
     memcpy(retstr, &globalStr[0], i-1);
   }else{
     memcpy(retstr, &globalStr[0], i);

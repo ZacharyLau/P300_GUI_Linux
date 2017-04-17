@@ -14,6 +14,8 @@ void init_reading(FILE* fpgl, FILE* fpr){
   fpRead = fpr;
 }
 
+
+
 int get_crlf_line(){
   buffer = NULL;
   int length = 0;  
