@@ -8,16 +8,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
- 
+#include "../List.c" 
 #define ltbrownColor 0xc0c0c0
 #define labelWidth  600
 #define labelHeight 420
 #define plotWidth  580
 #define plotHeight 400
 
-void labeling_index(float max,  Display *display, Window win, int orientation);
-void drawing_devision(float vDivision, int hDivision, Display *d, Window w);
+void labeling_index(int max,  Display *display, Window win, int orientation);
+void drawing_devision(int vDivision, int hDivision, Display *d, Window w);
 void flash_symbol_vertical_label(int max, Display *display, Window win, int isLabel);
+void plotting(list *lst, Display *display, Window win, int isPercentage);
+
+
 
 int main(void) {
    Display *d;
@@ -75,29 +78,46 @@ int main(void) {
    
    int numpnts=10;
    float v[10]={1,2,3,4,5,6,7,8,9,12};
-   float max;
+   int pMax, sMax;
    int i;
-   max=v[0];
-   for(int i=0;i<10;i++){
-      if(v[i]>max)
-         max=v[i];
-      
-      }
    
-  
-  
+   //testing list
+   list *lst = (list *)malloc(sizeof(list));
+   int temp1[] = {40, 60, 83, 83, 100, 100, 100, 90, 83, 60};
+   lst -> percentage = temp1;
+   int temp2[] = {1, 3, 6, 8, 8, 8, 7, 8, 7, 6};
+   lst -> symbol = temp2;
+   lst -> length = 10;
+   lst -> capacity = 12;
 
+   pMax = lst -> percentage[0];
+   sMax = lst -> symbol[0];
+   for(int i=0;i<lst->length;i++){
+      if(pMax<lst->percentage[i]){
+	 pMax = lst -> percentage[i];
+      }
+      if(sMax<lst->symbol[i]){
+	 sMax = lst -> symbol[i];
+      }
+   }
+   
+   lst->pMax = pMax;
+   lst->sMax = sMax;
+   // end of testing list
    while (1) {
       XNextEvent(d, &e);
       if (e.type == Expose) {
-	 int div = 13;
+	 
          labeling_index(100, d, percentCorrect, 1);
-         labeling_index(max, d, percentCorrect, 0);
-         labeling_index(div, d, symbolMinute, 1);
-         labeling_index(max, d, symbolMinute, 0);
+         labeling_index(lst->length, d, percentCorrect, 0);
+         labeling_index(sMax, d, symbolMinute, 1);
+         labeling_index(lst->length, d, symbolMinute, 0);
 
-         drawing_devision(100, (int)(max), d, pcPlot);
-         drawing_devision(div, (int)(max), d, smPlot);
+         drawing_devision(100, lst->length, d, pcPlot);
+         drawing_devision(sMax, lst->length, d, smPlot);
+
+         plotting(lst, d, pcPlot, 1);
+	 plotting(lst, d, smPlot, 0);
        /*  XFillRectangle(d, w, DefaultGC(d, s), 20, 20, 10, 10);
          for(i=1;i<=numpnts;i++){
             sprintf(msg,"%d",i);
@@ -116,7 +136,7 @@ int main(void) {
    return 0;
 }
 
-void drawing_devision(float vDivision, int hDivision, Display *d, Window w){
+void drawing_devision(int vDivision, int hDivision, Display *d, Window w){
 //draw board
    int s = DefaultScreen(d);
    XDrawLine(d, w, DefaultGC(d, s), 0,0,0,plotHeight); 
@@ -129,7 +149,6 @@ void drawing_devision(float vDivision, int hDivision, Display *d, Window w){
             XDrawLine(d, w, DefaultGC(d, s), 0,i*diff,9,i*diff);
       }
    }else{
-
 	    
 	    flash_symbol_vertical_label((int)(vDivision),d, w, 0);	
    }
@@ -145,11 +164,30 @@ void drawing_devision(float vDivision, int hDivision, Display *d, Window w){
 
 }
 
+void plotting(list* lst, Display *display, Window win, int isPercentage){
+   int s = DefaultScreen(display);
+   double vUnit;
+   int hUnit = plotWidth/(lst->length - 1);
+   if(isPercentage){
+      vUnit = plotHeight/lst->pMax;
+      for(int i=0; i<lst->length - 1; i++){
+         XDrawLine(display, win, DefaultGC(display, s), hUnit*i,plotHeight - lst->percentage[i]*vUnit,hUnit*(i+1),plotHeight - lst->percentage[i+1]*vUnit);
 
+      }
+   }else{
+      vUnit = plotHeight/lst->sMax;
+      for(int i=0; i<lst->length-1; i++){
+         XDrawLine(display, win, DefaultGC(display, s), hUnit*i,plotHeight - lst->symbol[i]*vUnit,hUnit*(i+1),plotHeight - lst->symbol[i+1]*vUnit);
+
+      }
+   }
+
+
+}
 
 
    
-void labeling_index(float max,  Display *display, Window win, int orientation){
+void labeling_index(int max,  Display *display, Window win, int orientation){
 
    char msg[100];
    int s = DefaultScreen(display);
@@ -169,9 +207,6 @@ void labeling_index(float max,  Display *display, Window win, int orientation){
          }
       }else{
 	    flash_symbol_vertical_label((int)(max),display, win, 1);
-	    
-	
-
       }
    }else{//horizontal
       int intMax = (int)(max);
@@ -197,12 +232,12 @@ void flash_symbol_vertical_label(int max, Display *display, Window win, int isLa
       //printf("unit: %lf \n",unit); 
       double div = max / 4.0;
       double temp1 = round(div);
-printf("temp1: %lf \n", temp1);
+//printf("temp1: %lf \n", temp1);
       if((int)(temp1) == (int)(div)){
          temp1 += 1.0;
       }
       int temp = (int)(temp1);
-printf("temp: %d \n", temp);
+//printf("temp: %d \n", temp);
       int division = (int)(round(temp/unit));
 
 
