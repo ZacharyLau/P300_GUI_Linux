@@ -10,6 +10,11 @@ typedef struct list{
   int sMax;
 }list;
 
+typedef struct filename{
+  int length; 
+  char* name;
+  }filename;
+
 void create_list(){
   list *lst = (list *)malloc(sizeof(list));
   lst -> capacity = 5;
