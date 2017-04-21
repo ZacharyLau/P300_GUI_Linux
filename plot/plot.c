@@ -10,10 +10,10 @@
 #include <math.h>
 #include "../List.c" 
 #define ltbrownColor 0xc0c0c0
-#define labelWidth  600
-#define labelHeight 420
-#define plotWidth  580
-#define plotHeight 400
+#define labelWidth  522
+#define labelHeight 340
+#define plotWidth  480
+#define plotHeight 300
 
 void labeling_index(int max,  Display *display, Window win, int orientation);
 void drawing_devision(int vDivision, int hDivision, Display *d, Window w);
@@ -26,7 +26,7 @@ int main(void) {
    list *lst = (list *)malloc(sizeof(list));
    int temp1[] = {40, 60, 83, 83, 100, 100, 100, 90, 83, 60, 95};
    lst -> percentage = temp1;
-   int temp2[] = {1, 3, 6, 8, 8, 8, 7, 8, 7, 6, 8};
+   int temp2[] = {1, 3, 6, 8, 8, 8, 7, 7, 7, 6, 8};
    lst -> symbol = temp2;
    lst -> length = 11;
    lst -> capacity = 12;
@@ -64,13 +64,22 @@ void plot(list *lst, filename* name) {
    s = DefaultScreen(d);
 
 /*parent window */
-   w = XCreateSimpleWindow(d, RootWindow(d, s), 100, 100, 1200, 900, 1,
+   w = XCreateSimpleWindow(d, RootWindow(d, s), 100, 100, 900, 800, 1,
                            BlackPixel(d, s), WhitePixel(d, s));
    XSetNormalHints(d, w, &my_hints);  /* Where new_window is the new window */
    XSelectInput(d, w, ExposureMask | KeyPressMask);
    XMapWindow(d, w);
 
+/*symbol Minute window */
+   symbolMinute = XCreateSimpleWindow(d, w, 20, labelHeight+70, labelWidth+6, labelHeight , 0,
+                           BlackPixel(d, s), WhitePixel(d, s));
+   XSelectInput(d, symbolMinute, ExposureMask | KeyPressMask);
+   XMapWindow(d, symbolMinute);
 
+   smPlot = XCreateSimpleWindow(d, symbolMinute, 22, 20, plotWidth, plotHeight, 1,
+                           BlackPixel(d, s), WhitePixel(d, s));
+   XSelectInput(d, smPlot, ExposureMask | KeyPressMask);
+   XMapWindow(d, smPlot);
 
 /*percent correct window */
    percentCorrect = XCreateSimpleWindow(d, w, 20, 20, labelWidth+6, labelHeight, 0,
@@ -78,21 +87,12 @@ void plot(list *lst, filename* name) {
    XSelectInput(d, percentCorrect, ExposureMask | KeyPressMask);
    XMapWindow(d, percentCorrect);
    
-   pcPlot = XCreateSimpleWindow(d, percentCorrect, 0, 0, plotWidth, plotHeight, 1,
+   pcPlot = XCreateSimpleWindow(d, percentCorrect, 22, 20, plotWidth, plotHeight, 1,
                            BlackPixel(d, s), WhitePixel(d, s));
    XSelectInput(d, pcPlot, ExposureMask | KeyPressMask);
    XMapWindow(d, pcPlot);
 
-/*symbol Minute window */
-   symbolMinute = XCreateSimpleWindow(d, w, 20, labelHeight+40, labelWidth+6, labelHeight, 0,
-                           BlackPixel(d, s), WhitePixel(d, s));
-   XSelectInput(d, symbolMinute, ExposureMask | KeyPressMask);
-   XMapWindow(d, symbolMinute);
 
-   smPlot = XCreateSimpleWindow(d, symbolMinute, 0, 0, plotWidth, plotHeight, 1,
-                           BlackPixel(d, s), WhitePixel(d, s));
-   XSelectInput(d, smPlot, ExposureMask | KeyPressMask);
-   XMapWindow(d, smPlot);
    
    int numpnts=10;
    float v[10]={1,2,3,4,5,6,7,8,9,12};
@@ -134,18 +134,18 @@ void plot(list *lst, filename* name) {
          plotting(lst, d, pcPlot, 1);
 	 plotting(lst, d, smPlot, 0);
 	 
-	 XDrawString(d, w, DefaultGC(d, s), 680,50, "File Name: ", strlen("File Name: "));
-         XDrawString(d, w, DefaultGC(d, s), 750,50, name -> name, name -> length);
+	 XDrawString(d, w, DefaultGC(d, s), 700,50, "File Name: ", strlen("File Name: "));
+         XDrawString(d, w, DefaultGC(d, s), 768,50, name -> name, name -> length);
 	 char lbl[100];
          sprintf(lbl, "X: # Target Flashes");
-	 XDrawString(d, w, DefaultGC(d, s), 680,390, lbl, strlen(lbl));
+	 XDrawString(d, w, DefaultGC(d, s), 230,370, lbl, strlen(lbl));
          sprintf(lbl, "Y: Percent Correct");
-         XDrawString(d, w, DefaultGC(d, s), 680,420, lbl, strlen(lbl));
+         XDrawString(d, w, DefaultGC(d, s), 550,190, lbl, strlen(lbl));
 
 	 sprintf(lbl, "X: # Target Flashes");
-	 XDrawString(d, w, DefaultGC(d, s), 680,830, lbl, strlen(lbl));
+	 XDrawString(d, w, DefaultGC(d, s), 230,labelHeight * 2+80, lbl, strlen(lbl));
          sprintf(lbl, "Y: Symbol/Minute");
-         XDrawString(d, w, DefaultGC(d, s), 680,860, lbl, strlen(lbl));
+         XDrawString(d, w, DefaultGC(d, s), 550,labelHeight + 240, lbl, strlen(lbl));
 
        /*  XFillRectangle(d, w, DefaultGC(d, s), 20, 20, 10, 10);
          for(i=1;i<=numpnts;i++){
@@ -168,7 +168,7 @@ void plot(list *lst, filename* name) {
 void drawing_devision(int vDivision, int hDivision, Display *d, Window w){
 //draw board
    int s = DefaultScreen(d);
-   XSetLineAttributes(d, DefaultGC(d, s), 1, LineSolid, CapNotLast, JoinMiter);
+   XSetLineAttributes(d, DefaultGC(d, s), 1, LineOnOffDash, CapNotLast, JoinMiter);
    //XDrawLine(d, w, DefaultGC(d, s), 0,0,0,plotHeight); 
    //XDrawLine(d, w, DefaultGC(d, s), 0,plotHeight-1,plotWidth,plotHeight-1);
    int i;
@@ -178,8 +178,8 @@ void drawing_devision(int vDivision, int hDivision, Display *d, Window w){
       
       for(i=1;i<10;i++){
       
-            XDrawLine(d, w, DefaultGC(d, s), 0,i*diff,9,i*diff);
-	    XDrawLine(d, w, DefaultGC(d, s), plotWidth-9,i*diff,plotWidth,i*diff);
+            XDrawLine(d, w, DefaultGC(d, s), 0,i*diff,plotWidth,i*diff);
+	    //XDrawLine(d, w, DefaultGC(d, s), plotWidth-9,i*diff,plotWidth,i*diff);
       }
    }else{
 	    
@@ -188,8 +188,8 @@ void drawing_devision(int vDivision, int hDivision, Display *d, Window w){
 //draw horizontal division
    int diff = plotWidth / (hDivision - 1);
    for(i=1;i<hDivision - 1;i++){
-      XDrawLine(d, w, DefaultGC(d, s), i*diff,0,i*diff,9);
-      XDrawLine(d, w, DefaultGC(d, s), i*diff,plotHeight,i*diff,392);
+      XDrawLine(d, w, DefaultGC(d, s), i*diff,0,i*diff,plotHeight);
+      //XDrawLine(d, w, DefaultGC(d, s), i*diff,plotHeight,i*diff,plotHeight - 9);
       
       
 
@@ -211,7 +211,7 @@ void plotting(list* lst, Display *display, Window win, int isPercentage){
 
       }
    }else{
-      vUnit = plotHeight/lst->sMax;
+      vUnit = (double)(plotHeight)/lst->sMax;
       for(i=0; i<lst->length-1; i++){
          XDrawLine(display, win, DefaultGC(display, s), hUnit*i,plotHeight - lst->symbol[i]*vUnit,hUnit*(i+1),plotHeight - lst->symbol[i+1]*vUnit);
 
@@ -235,10 +235,11 @@ void labeling_index(int max,  Display *display, Window win, int orientation){
    if(orientation){//vertical
       if((int)(max) == 100){
          diff = (int)((max)/10);
-         for(i=0; i<=max; i++){
+         for(i=0; i<=10; i++){
            
             sprintf(msg,"%d", ((int)(max) - diff*i));
-            XDrawString(display, win, DefaultGC(display, s), plotWidth + 6,(plotHeight / 10 -1)*(i)+10, msg, strlen(msg));
+            XDrawString(display, win, DefaultGC(display, s), plotWidth + 28,(plotHeight / 10 -1)*(i)+30, msg, strlen(msg));
+	    XDrawString(display, win, DefaultGC(display, s), 0,(plotHeight / 10 -1)*(i)+30, msg, strlen(msg));
 
          }
       }else{
@@ -248,9 +249,11 @@ void labeling_index(int max,  Display *display, Window win, int orientation){
       int intMax = (int)(max);
       for(i=0;i<intMax;i++){
             int unit = (int)(plotWidth/(intMax-1) - 1) ;
-	    //printf("unit: %d\n",unit);
+	    
             sprintf(msg,"%d",(int)((i+1)));
-            XDrawString(display, win, DefaultGC(display, s), unit*(i)+2, labelHeight-4, msg, strlen(msg));
+           
+	    XDrawString(display, win, DefaultGC(display, s), unit*(i)+22, plotHeight+36, msg, strlen(msg));
+	    XDrawString(display, win, DefaultGC(display, s), unit*(i)+22, 16, msg, strlen(msg));
             }
 
    }
@@ -265,7 +268,7 @@ void flash_symbol_vertical_label(int max, Display *display, Window win, int isLa
 
    //calculate the distance for each division
 
-      double unit = max / 400.0; //get the value for each pixel
+      double unit = max / (double)(plotHeight); //get the value for each pixel
   
       double div = max / 4.0;
       double temp1 = round(div);
@@ -281,12 +284,14 @@ void flash_symbol_vertical_label(int max, Display *display, Window win, int isLa
    if(isLabel){
    //write the top value
       sprintf(msg,"%d",max);
-      XDrawString(display, win, DefaultGC(display, s), plotWidth + 6 , 10, msg, strlen(msg));     
+      XDrawString(display, win, DefaultGC(display, s), plotWidth + 28 , 30, msg, strlen(msg));   
+      XDrawString(display, win, DefaultGC(display, s), 10 , 30, msg, strlen(msg));   
       
       for(i = 0; i < 4; i++){
 	 if(temp * i != max){
             sprintf(msg,"%d",temp * i);
- 	    XDrawString(display, win, DefaultGC(display, s), plotWidth + 6, (labelHeight - 20 -(division * i)), msg, strlen(msg));
+ 	    XDrawString(display, win, DefaultGC(display, s), plotWidth + 28, (plotHeight -((division ) * i) + 20), msg, strlen(msg));
+	    XDrawString(display, win, DefaultGC(display, s), 10, (plotHeight -((division ) * i) + 20), msg, strlen(msg));
 	 } 
       }
 
@@ -297,8 +302,8 @@ void flash_symbol_vertical_label(int max, Display *display, Window win, int isLa
 //draw the rest
       for(i = 0; i < 4; i++){
          if(temp * i != max){
-            XDrawLine(display, win, DefaultGC(display, s), 0,(labelHeight - 20 -(division * i)),9,(labelHeight - 20 -(division * i)));
-	    XDrawLine(display, win, DefaultGC(display, s), plotWidth - 9,(labelHeight - 20 -(division * i)),plotWidth ,(labelHeight - 20 -(division * i)));
+            XDrawLine(display, win, DefaultGC(display, s), 0,(plotHeight-(division * i)),plotWidth,(plotHeight -(division * i)));
+	    //XDrawLine(display, win, DefaultGC(display, s), plotWidth - 9,(plotHeight -(division * i)),plotWidth ,(plotHeight -(division * i)));
          }
       }
    }
