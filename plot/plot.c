@@ -26,7 +26,7 @@ int main(void) {
    list *lst = (list *)malloc(sizeof(list));
    int temp1[] = {40, 60, 83, 83, 100, 100, 100, 90, 83, 60, 95};
    lst -> percentage = temp1;
-   int temp2[] = {1, 3, 6, 8, 8, 8, 7, 7, 7, 6, 8};
+   int temp2[] = {1, 3, 6, 8, 8, 8, 7, 7, 9, 6, 8};
    lst -> symbol = temp2;
    lst -> length = 11;
    lst -> capacity = 12;
